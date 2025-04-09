@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Receiver (PC)</title>
+  <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin: 40px; }
+    #output { margin-top: 20px; font-size: 1.2em; }
+  </style>
+</head>
+<body>
+  <h1>🎯 Máy tính nhận tín hiệu</h1>
+  <p>Quét mã QR bằng điện thoại để kết nối</p>
+  <canvas id="qrcode"></canvas>
+  <div id="output">⏳ Đang chờ kết nối...</div>
+
+  <script>
+    const peer = new Peer(); // Dùng server mặc định của PeerJS
+
+    peer.on('open', id => {
+      const controlUrl = `${location.origin}/control.html?peerId=${id}`;
+      QRCode.toCanvas(document.getElementById('qrcode'), controlUrl, { width: 200 });
+      console.log("Peer ID:", id);
+    });
+
+    peer.on('connection', conn => {
+      document.getElementById('output').innerText = "✅ Đã kết nối!";
+      conn.on('data', data => {
+        document.getElementById('output').innerText = "📥 Nhận: " + JSON.stringify(data);
+      });
+    });
+
+    peer.on('error', err => {
+      document.getElementById('output').innerText = "❌ Lỗi: " + err.message;
+      console.error(err);
+    });
+  </script>
+</body>
+</html>
