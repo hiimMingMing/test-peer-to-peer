@@ -2,13 +2,9 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Receiver (PC)</title>
+  <title>Receiver</title>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-  <style>
-    body { font-family: sans-serif; text-align: center; margin: 40px; }
-    #output { margin-top: 20px; font-size: 1.2em; }
-  </style>
 </head>
 <body>
   <h1>🎯 Máy tính nhận tín hiệu</h1>
@@ -17,12 +13,27 @@
   <div id="output">⏳ Đang chờ kết nối...</div>
 
   <script>
-    const peer = new Peer(); // Dùng server mặc định của PeerJS
+    const peer = new Peer({
+      config: {
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          {
+            urls: "turn:openrelay.metered.ca:80",
+            username: "openrelayproject",
+            credential: "openrelayproject"
+          },
+          {
+            urls: "turn:openrelay.metered.ca:443",
+            username: "openrelayproject",
+            credential: "openrelayproject"
+          }
+        ]
+      }
+    });
 
     peer.on('open', id => {
-      const controlUrl = `https://hiimmingming.github.io/test-peer-to-peer//control.html?peerId=${id}`;
-      QRCode.toCanvas(document.getElementById('qrcode'), controlUrl, { width: 200 });
-      console.log("Peer ID:", id);
+      const controlUrl = `https://hiimmingming.github.io/test-peer-to-peer/control.html?peerId=${id}`;
+      QRCode.toCanvas(document.getElementById('qrcode'), controlUrl);
     });
 
     peer.on('connection', conn => {
@@ -30,11 +41,6 @@
       conn.on('data', data => {
         document.getElementById('output').innerText = "📥 Nhận: " + JSON.stringify(data);
       });
-    });
-
-    peer.on('error', err => {
-      document.getElementById('output').innerText = "❌ Lỗi: " + err.message;
-      console.error(err);
     });
   </script>
 </body>

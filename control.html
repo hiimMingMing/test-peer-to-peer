@@ -2,15 +2,8 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Controller (Phone)</title>
+  <title>Controller</title>
   <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-  <style>
-    body { font-family: sans-serif; text-align: center; margin: 40px; }
-    button {
-      font-size: 1.5em; margin: 10px; padding: 15px 25px;
-      border-radius: 10px; border: none; background: #2196F3; color: white;
-    }
-  </style>
 </head>
 <body>
   <h1>📲 Điều khiển</h1>
@@ -22,27 +15,40 @@
 
   <script>
     const peerId = new URLSearchParams(location.search).get("peerId");
-    const peer = new Peer();
+
+    const peer = new Peer({
+      config: {
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          {
+            urls: "turn:openrelay.metered.ca:80",
+            username: "openrelayproject",
+            credential: "openrelayproject"
+          },
+          {
+            urls: "turn:openrelay.metered.ca:443",
+            username: "openrelayproject",
+            credential: "openrelayproject"
+          }
+        ]
+      }
+    });
 
     let conn;
 
     peer.on('open', () => {
       conn = peer.connect(peerId);
-
       conn.on('open', () => {
         document.getElementById('status').innerText = "✅ Đã kết nối tới " + peerId;
       });
-
       conn.on('error', err => {
         document.getElementById('status').innerText = "❌ Lỗi kết nối!";
-        console.error(err);
       });
     });
 
     function send(action) {
       if (conn && conn.open) {
         conn.send({ action });
-        console.log("📤 Gửi:", action);
       }
     }
   </script>
