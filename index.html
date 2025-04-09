@@ -20,7 +20,7 @@
     const peer = new Peer(); // Dùng server mặc định của PeerJS
 
     peer.on('open', id => {
-      const controlUrl = `${location.origin}/control.html?peerId=${id}`;
+      const controlUrl = `https://hiimmingming.github.io/test-peer-to-peer//control.html?peerId=${id}`;
       QRCode.toCanvas(document.getElementById('qrcode'), controlUrl, { width: 200 });
       console.log("Peer ID:", id);
     });
