@@ -14,17 +14,22 @@
 
   <script>
     const peer = new Peer({
-  config: {
-    iceServers: [
-      {
-        urls: 'relay1.expressturn.com:3478',
-        username: 'efKXWNMP7A3ZXS5822',
-        credential: 'thrAF4jO46h4uTSE'
+      config: {
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          {
+            urls: "turn:openrelay.metered.ca:80",
+            username: "openrelayproject",
+            credential: "openrelayproject"
+          },
+          {
+            urls: "turn:openrelay.metered.ca:443",
+            username: "openrelayproject",
+            credential: "openrelayproject"
+          }
+        ]
       }
-    ]
-  }
-});
-
+    });
 
     peer.on('open', id => {
       const controlUrl = `https://hiimmingming.github.io/test-peer-to-peer/control.html?peerId=${id}`;
